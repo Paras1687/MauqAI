@@ -1,5 +1,5 @@
 import React from 'react';
-import { Filter, ArrowUpDown, CheckSquare, Square, Globe } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 
 export default function FilterToolbar({
   typeFilter,
@@ -15,83 +15,74 @@ export default function FilterToolbar({
   const types = ['All', 'Internship', 'Hackathon', 'Student Program', 'Scholarship'];
 
   return (
-    <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-4">
+    <div className="bg-white border border-[#E5E5E2] rounded-xl p-3 sm:p-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
       
-      {/* Type Filter Pills */}
-      <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-        <span className="text-xs font-semibold text-slate-400 mr-1 flex items-center gap-1 shrink-0">
-          <Filter className="w-3.5 h-3.5 text-emerald-400" />
+      {/* Type Filter Buttons */}
+      <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+        <span className="text-xs text-[#777777] font-medium mr-1 shrink-0">
           Filter:
         </span>
-        {types.map((type) => (
-          <button
-            key={type}
-            onClick={() => setTypeFilter(type)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all shrink-0 cursor-pointer ${
-              typeFilter === type
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
-            }`}
-          >
-            {type}
-          </button>
-        ))}
+        {types.map((type) => {
+          const isSelected = typeFilter === type;
+          return (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setTypeFilter(type)}
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all shrink-0 cursor-pointer ${
+                isSelected
+                  ? 'bg-[#242424] text-white'
+                  : 'bg-[#F8F8F6] border border-[#E5E5E2] text-[#555555] hover:text-[#242424] hover:border-[#D0D0CD]'
+              }`}
+            >
+              {type}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Toggles and Sort Options */}
-      <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+      {/* Toggles and Sorting */}
+      <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 w-full md:w-auto text-xs">
         
         {/* Remote Only Toggle */}
-        <button
-          onClick={() => setRemoteOnlyFilter(!remoteOnlyFilter)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors cursor-pointer ${
-            remoteOnlyFilter
-              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
-              : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-300'
-          }`}
-        >
-          {remoteOnlyFilter ? (
-            <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
-          ) : (
-            <Square className="w-3.5 h-3.5" />
-          )}
-          <span>Remote Only</span>
-        </button>
+        <label className="flex items-center gap-1.5 text-[#555555] cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={remoteOnlyFilter}
+            onChange={(e) => setRemoteOnlyFilter(e.target.checked)}
+            className="w-3.5 h-3.5 rounded border-[#E5E5E2] text-[#237A57] focus:ring-[#237A57]"
+          />
+          <span>Remote only</span>
+        </label>
 
         {/* Verified Only Toggle */}
-        <button
-          onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors cursor-pointer ${
-            verifiedOnlyFilter
-              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
-              : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-300'
-          }`}
-        >
-          {verifiedOnlyFilter ? (
-            <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
-          ) : (
-            <Square className="w-3.5 h-3.5" />
-          )}
-          <span>Verified Only</span>
-        </button>
+        <label className="flex items-center gap-1.5 text-[#555555] cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={verifiedOnlyFilter}
+            onChange={(e) => setVerifiedOnlyFilter(e.target.checked)}
+            className="w-3.5 h-3.5 rounded border-[#E5E5E2] text-[#237A57] focus:ring-[#237A57]"
+          />
+          <span>Verified only</span>
+        </label>
 
-        {/* Sort Dropdown */}
-        <div className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5">
-          <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+        {/* Sort Select */}
+        <div className="flex items-center gap-1 bg-[#F8F8F6] border border-[#E5E5E2] rounded-md px-2 py-1">
+          <ArrowUpDown className="w-3 h-3 text-[#777777]" />
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-transparent text-xs text-slate-200 focus:outline-none cursor-pointer"
+            className="bg-transparent text-xs text-[#242424] focus:outline-none cursor-pointer"
           >
-            <option value="match_score">Highest Match</option>
-            <option value="compensation">Highest Compensation</option>
-            <option value="deadline">Soonest Deadline</option>
+            <option value="match_score">Highest match</option>
+            <option value="compensation">Highest compensation</option>
+            <option value="deadline">Soonest deadline</option>
           </select>
         </div>
 
-        {/* Total Count */}
-        <span className="text-xs font-mono text-slate-400 px-2 py-1 rounded bg-slate-950 border border-slate-800/80">
-          <strong className="text-emerald-400">{totalResults}</strong> found
+        {/* Count Label */}
+        <span className="text-xs text-[#777777] font-medium pl-1">
+          <strong className="text-[#242424] font-semibold">{totalResults}</strong> {totalResults === 1 ? 'opportunity' : 'opportunities'}
         </span>
 
       </div>

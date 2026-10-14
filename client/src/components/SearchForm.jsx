@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  Search, 
-  Sparkles, 
-  Compass, 
-  MapPin, 
-  DollarSign, 
-  GraduationCap, 
-  Building2, 
-  Calendar,
-  Layers,
-  Check
-} from 'lucide-react';
+import { Search } from 'lucide-react';
 
 const PRESETS = [
   {
-    name: 'AI/ML Undergrad 2026',
-    icon: '🤖',
+    name: 'AI/ML internships',
     profile: {
       opportunityType: 'Internship',
       skills: ['Python', 'PyTorch', 'Machine Learning', 'Data Structures'],
@@ -29,8 +17,7 @@ const PRESETS = [
     }
   },
   {
-    name: 'Global Web3 & AI Hackathons',
-    icon: '⚡',
+    name: 'Web3 & AI hackathons',
     profile: {
       opportunityType: 'Hackathon',
       skills: ['Rust', 'TypeScript', 'Solana', 'Web3', 'React'],
@@ -44,8 +31,7 @@ const PRESETS = [
     }
   },
   {
-    name: 'Remote Full-Stack Intern',
-    icon: '💻',
+    name: 'Remote software internships',
     profile: {
       opportunityType: 'Internship',
       skills: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Go'],
@@ -59,8 +45,7 @@ const PRESETS = [
     }
   },
   {
-    name: 'Open Source Fellowship',
-    icon: '🌐',
+    name: 'Open-source fellowships',
     profile: {
       opportunityType: 'Student Program',
       skills: ['Python', 'Go', 'Linux', 'Git', 'Kubernetes'],
@@ -78,8 +63,10 @@ const PRESETS = [
 export default function SearchForm({ profile, setProfile, onSearch, isLoading }) {
   const [skillInput, setSkillInput] = useState('');
   const [keywordInput, setKeywordInput] = useState('');
+  const [activePreset, setActivePreset] = useState(null);
 
   const handlePresetClick = (preset) => {
+    setActivePreset(preset.name);
     setProfile(preset.profile);
   };
 
@@ -90,6 +77,7 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
       if (trimmed && !profile.skills.includes(trimmed)) {
         setProfile({ ...profile, skills: [...profile.skills, trimmed] });
         setSkillInput('');
+        setActivePreset(null);
       }
     }
   };
@@ -99,6 +87,7 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
       ...profile,
       skills: profile.skills.filter(s => s !== skillToRemove)
     });
+    setActivePreset(null);
   };
 
   const handleAddKeyword = (e) => {
@@ -108,6 +97,7 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
       if (trimmed && !profile.keywords.includes(trimmed)) {
         setProfile({ ...profile, keywords: [...profile.keywords, trimmed] });
         setKeywordInput('');
+        setActivePreset(null);
       }
     }
   };
@@ -117,6 +107,7 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
       ...profile,
       keywords: profile.keywords.filter(k => k !== kwToRemove)
     });
+    setActivePreset(null);
   };
 
   const handleSubmit = (e) => {
@@ -125,124 +116,127 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-      {/* Decorative subtle radar glow in corner */}
-      <div className="absolute -top-24 -right-24 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Header & Presets */}
+    <div className="bg-white border border-[#E5E5E2] rounded-xl p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      
+      {/* Heading & Subtitle */}
       <div className="mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Compass className="w-5 h-5 text-emerald-400" />
-              Configure Candidate Profile & Search Goals
-            </h2>
-            <p className="text-sm text-slate-400 mt-0.5">
-              Specify your target criteria. TinyFish will autonomously search, visit, and verify live endpoints.
-            </p>
-          </div>
+        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-[#242424]">
+          Find your next opportunity
+        </h1>
+        <p className="text-sm text-[#777777] mt-1 leading-normal max-w-2xl">
+          Search internships, hackathons, and fellowships. We'll check the official sources and show you which opportunities are worth pursuing.
+        </p>
 
-          <span className="text-xs font-mono text-slate-400 self-start sm:self-auto px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/50">
-            Quick 1-Click Presets:
+        {/* Compact Presets Bar */}
+        <div className="mt-4 pt-4 border-t border-[#EBEBE8] flex flex-wrap items-center gap-2">
+          <span className="text-xs text-[#777777] font-medium mr-1">
+            Common searches:
           </span>
-        </div>
-
-        {/* Presets Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {PRESETS.map((preset) => (
-            <button
-              key={preset.name}
-              type="button"
-              onClick={() => handlePresetClick(preset)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/40 text-xs font-medium text-slate-300 hover:text-white transition-all text-left cursor-pointer"
-            >
-              <span className="text-base">{preset.icon}</span>
-              <span className="truncate">{preset.name}</span>
-            </button>
-          ))}
+          {PRESETS.map((preset) => {
+            const isSelected = activePreset === preset.name;
+            return (
+              <button
+                key={preset.name}
+                type="button"
+                onClick={() => handlePresetClick(preset)}
+                className={`text-xs px-3 py-1.5 rounded-lg border transition-all cursor-pointer font-medium ${
+                  isSelected
+                    ? 'bg-[#F0F6F3] border-[#237A57] text-[#237A57]'
+                    : 'bg-[#F8F8F6] border-[#E5E5E2] text-[#555555] hover:text-[#242424] hover:border-[#D5D5D0]'
+                }`}
+              >
+                {preset.name}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Row 1: Type, Education, Graduation Year */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-emerald-400" />
-              Opportunity Type
+            <label className="block text-xs font-medium text-[#444444] mb-1.5">
+              Opportunity type
             </label>
             <select
               value={profile.opportunityType}
-              onChange={(e) => setProfile({ ...profile, opportunityType: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              onChange={(e) => {
+                setProfile({ ...profile, opportunityType: e.target.value });
+                setActivePreset(null);
+              }}
+              className="w-full bg-white border border-[#E5E5E2] rounded-lg px-3 py-2 text-sm text-[#242424] focus:outline-none focus:border-[#237A57] focus:ring-1 focus:ring-[#237A57] transition-colors"
             >
               <option value="Internship">Internship</option>
               <option value="Hackathon">Hackathon</option>
-              <option value="Student Program">Student Program / Fellowship</option>
+              <option value="Student Program">Student program / fellowship</option>
               <option value="Scholarship">Scholarship</option>
-              <option value="all">Any / All Opportunities</option>
+              <option value="all">Any / all opportunities</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
-              Education Level
+            <label className="block text-xs font-medium text-[#444444] mb-1.5">
+              Education level
             </label>
             <select
               value={profile.educationLevel}
-              onChange={(e) => setProfile({ ...profile, educationLevel: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              onChange={(e) => {
+                setProfile({ ...profile, educationLevel: e.target.value });
+                setActivePreset(null);
+              }}
+              className="w-full bg-white border border-[#E5E5E2] rounded-lg px-3 py-2 text-sm text-[#242424] focus:outline-none focus:border-[#237A57] focus:ring-1 focus:ring-[#237A57] transition-colors"
             >
-              <option value="Undergraduate">Undergraduate (B.Tech / B.S. / B.E.)</option>
+              <option value="Undergraduate">Undergraduate (B.Tech / B.S.)</option>
               <option value="Master's / Graduate">Master's / Graduate (M.Tech / M.S.)</option>
-              <option value="PhD Candidate">PhD Candidate / Researcher</option>
-              <option value="High School">High School / Pre-College</option>
-              <option value="Recent Graduate">Recent Graduate / Bootcamper</option>
+              <option value="PhD Candidate">PhD candidate</option>
+              <option value="High School">High school</option>
+              <option value="Recent Graduate">Recent graduate</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
-              Graduation Year
+            <label className="block text-xs font-medium text-[#444444] mb-1.5">
+              Graduation year
             </label>
             <select
               value={profile.graduationYear}
-              onChange={(e) => setProfile({ ...profile, graduationYear: Number(e.target.value) })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              onChange={(e) => {
+                setProfile({ ...profile, graduationYear: Number(e.target.value) });
+                setActivePreset(null);
+              }}
+              className="w-full bg-white border border-[#E5E5E2] rounded-lg px-3 py-2 text-sm text-[#242424] focus:outline-none focus:border-[#237A57] focus:ring-1 focus:ring-[#237A57] transition-colors"
             >
               <option value={2025}>Class of 2025</option>
               <option value={2026}>Class of 2026</option>
               <option value={2027}>Class of 2027</option>
-              <option value={2028}>Class of 2028+</option>
+              <option value={2028}>Class of 2028 or later</option>
             </select>
           </div>
         </div>
 
-        {/* Row 2: Skills & Interests */}
+        {/* Row 2: Target Skills */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              Target Skills & Technologies
-            </span>
-            <span className="text-[11px] font-normal text-slate-400 lowercase font-mono">
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-xs font-medium text-[#444444]">
+              Target skills and technologies
+            </label>
+            <span className="text-[11px] text-[#777777]">
               Press Enter or comma to add
             </span>
-          </label>
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex flex-wrap items-center gap-2 focus-within:border-emerald-500 transition-colors">
+          </div>
+          <div className="bg-white border border-[#E5E5E2] rounded-lg p-2 flex flex-wrap items-center gap-1.5 min-h-[42px] focus-within:border-[#237A57] focus-within:ring-1 focus-within:ring-[#237A57] transition-colors">
             {profile.skills.map((skill) => (
               <span
                 key={skill}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-medium"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#F4F4F2] border border-[#E5E5E2] text-xs text-[#242424]"
               >
-                {skill}
+                <span>{skill}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveSkill(skill)}
-                  className="hover:text-emerald-100 hover:bg-emerald-500/20 rounded-full w-4 h-4 inline-flex items-center justify-center text-emerald-400"
+                  className="text-[#777777] hover:text-[#242424] text-xs leading-none"
                 >
                   ×
                 </button>
@@ -250,76 +244,81 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
             ))}
             <input
               type="text"
-              placeholder={profile.skills.length === 0 ? "e.g. Python, Machine Learning, React, Rust, Go..." : "Add another skill..."}
+              placeholder={profile.skills.length === 0 ? "e.g. Python, React, PyTorch, Go..." : "Add skill..."}
               value={skillInput}
               onChange={(e) => setSkillInput(e.target.value)}
               onKeyDown={handleAddSkill}
-              className="flex-1 min-w-[140px] bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none py-1"
+              className="flex-1 min-w-[120px] bg-transparent text-sm text-[#242424] placeholder-[#999999] focus:outline-none py-0.5 px-1"
             />
           </div>
         </div>
 
-        {/* Row 3: Location, Remote Toggle, Min Stipend, Keywords */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Row 3: Location, Min Stipend, Companies */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              Preferred Location
+            <label className="block text-xs font-medium text-[#444444] mb-1.5">
+              Preferred location
             </label>
             <input
               type="text"
-              placeholder="e.g. Remote, San Francisco, India, New York"
+              placeholder="e.g. Remote, San Francisco, India"
               value={profile.preferredLocation}
-              onChange={(e) => setProfile({ ...profile, preferredLocation: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              onChange={(e) => {
+                setProfile({ ...profile, preferredLocation: e.target.value });
+                setActivePreset(null);
+              }}
+              className="w-full bg-white border border-[#E5E5E2] rounded-lg px-3 py-2 text-sm text-[#242424] focus:outline-none focus:border-[#237A57] focus:ring-1 focus:ring-[#237A57] transition-colors"
             />
-            <div className="mt-2 flex items-center gap-2">
+            <label className="mt-2 flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
-                id="remoteOnlyToggle"
                 checked={profile.remoteOnly}
-                onChange={(e) => setProfile({ ...profile, remoteOnly: e.target.checked })}
-                className="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-emerald-500/20"
+                onChange={(e) => {
+                  setProfile({ ...profile, remoteOnly: e.target.checked });
+                  setActivePreset(null);
+                }}
+                className="w-4 h-4 rounded border-[#E5E5E2] text-[#237A57] focus:ring-[#237A57]"
               />
-              <label htmlFor="remoteOnlyToggle" className="text-xs text-slate-400 cursor-pointer select-none">
-                Require 100% Remote / Virtual only
-              </label>
-            </div>
+              <span className="text-xs text-[#666666]">
+                100% remote / virtual only
+              </span>
+            </label>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-              Min Stipend / Prize ($)
+            <label className="block text-xs font-medium text-[#444444] mb-1.5">
+              Minimum stipend or prize ($)
             </label>
             <input
               type="number"
               placeholder="e.g. 2000"
               value={profile.minStipend || ''}
-              onChange={(e) => setProfile({ ...profile, minStipend: e.target.value ? Number(e.target.value) : 0 })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              onChange={(e) => {
+                setProfile({ ...profile, minStipend: e.target.value ? Number(e.target.value) : 0 });
+                setActivePreset(null);
+              }}
+              className="w-full bg-white border border-[#E5E5E2] rounded-lg px-3 py-2 text-sm text-[#242424] focus:outline-none focus:border-[#237A57] focus:ring-1 focus:ring-[#237A57] transition-colors"
             />
-            <span className="text-[11px] text-slate-400 mt-1 block">
-              Optional minimum monthly stipend or prize pool
+            <span className="text-[11px] text-[#777777] mt-1 block">
+              Monthly stipend or total prize pool
             </span>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-emerald-400" />
-              Prioritize Companies / Tags
+            <label className="block text-xs font-medium text-[#444444] mb-1.5">
+              Companies or keywords to prioritize
             </label>
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-1.5 flex flex-wrap items-center gap-1.5 min-h-[44px]">
+            <div className="bg-white border border-[#E5E5E2] rounded-lg p-1.5 flex flex-wrap items-center gap-1.5 min-h-[42px] focus-within:border-[#237A57] focus-within:ring-1 focus-within:ring-[#237A57] transition-colors">
               {profile.keywords.map((kw) => (
                 <span
                   key={kw}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-xs"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#F4F4F2] border border-[#E5E5E2] text-xs text-[#242424]"
                 >
-                  {kw}
+                  <span>{kw}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveKeyword(kw)}
-                    className="text-slate-400 hover:text-white"
+                    className="text-[#777777] hover:text-[#242424] text-xs leading-none"
                   >
                     ×
                   </button>
@@ -327,41 +326,40 @@ export default function SearchForm({ profile, setProfile, onSearch, isLoading })
               ))}
               <input
                 type="text"
-                placeholder={profile.keywords.length === 0 ? "e.g. Google, Solana, OpenAI..." : "+tag"}
+                placeholder={profile.keywords.length === 0 ? "e.g. Google, OpenAI..." : "+keyword"}
                 value={keywordInput}
                 onChange={(e) => setKeywordInput(e.target.value)}
                 onKeyDown={handleAddKeyword}
-                className="flex-1 min-w-[100px] bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none px-2 py-1"
+                className="flex-1 min-w-[80px] bg-transparent text-sm text-[#242424] placeholder-[#999999] focus:outline-none py-0.5 px-1"
               />
             </div>
           </div>
         </div>
 
-        {/* Action Button: Find Opportunities */}
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400"></span>
-            <span>Real-time multi-step verification across 3+ endpoints (Search + Detail + Application)</span>
-          </div>
+        {/* Primary Action Button */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#EBEBE8]">
+          <p className="text-xs text-[#777777] order-2 sm:order-1">
+            Checks discovery, official details, and application pages.
+          </p>
 
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2.5 transition-all shadow-lg cursor-pointer ${
+            className={`w-full sm:w-auto px-6 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer order-1 sm:order-2 ${
               isLoading
-                ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
-                : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 hover:shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98]'
+                ? 'bg-[#E5E5E2] text-[#777777] cursor-not-allowed'
+                : 'bg-[#237A57] hover:bg-[#1c6347] text-white shadow-xs'
             }`}
           >
             {isLoading ? (
               <>
-                <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                <span>TinyFish Agent Scanning Live Web...</span>
+                <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                <span>Searching live web...</span>
               </>
             ) : (
               <>
                 <Search className="w-4 h-4" />
-                <span>Launch Opportunity Radar</span>
+                <span>Find opportunities</span>
               </>
             )}
           </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Key, Shield, ExternalLink, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Key, X, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
 
 export default function ApiKeyModal({ isOpen, onClose, onKeyConfigured, isConfigured }) {
   const [apiKey, setApiKey] = useState('');
@@ -22,11 +22,11 @@ export default function ApiKeyModal({ isOpen, onClose, onKeyConfigured, isConfig
       });
       const data = await res.json();
       if (data.success) {
-        setStatus({ type: 'success', message: 'TinyFish API key successfully saved and verified!' });
+        setStatus({ type: 'success', message: 'TinyFish API key saved successfully.' });
         onKeyConfigured(true);
         setTimeout(() => {
           onClose();
-        }, 1200);
+        }, 1000);
       } else {
         setStatus({ type: 'error', message: data.error || 'Failed to configure API key' });
       }
@@ -38,91 +38,87 @@ export default function ApiKeyModal({ isOpen, onClose, onKeyConfigured, isConfig
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+      <div className="bg-white border border-[#E5E5E2] rounded-xl max-w-md w-full p-6 shadow-xl relative text-[#242424]">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 text-[#777777] hover:text-[#242424] p-1 rounded-md hover:bg-[#F4F4F2] transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <Key className="w-5 h-5" />
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-[#F0F6F3] text-[#237A57] flex items-center justify-center">
+            <Key className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">Configure TinyFish API Key</h3>
-            <p className="text-xs text-slate-400">Enables genuine live cloud browser automation</p>
+            <h3 className="text-base font-semibold text-[#242424]">Configure TinyFish API Key</h3>
+            <p className="text-xs text-[#777777]">Enables real-time autonomous browser automation</p>
           </div>
         </div>
 
-        {/* Security Notice */}
-        <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 mb-5 text-xs text-slate-300 space-y-2">
-          <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-            <Shield className="w-4 h-4" />
-            <span>Secure Server-Side Credential Storage</span>
-          </div>
-          <p className="text-slate-400 text-[11px] leading-relaxed">
-            Your API key is transmitted only to your local backend server and never exposed to the frontend or third-party loggers. You can also define it in your <code className="text-emerald-300">.env</code> file as <code className="text-emerald-300">TINYFISH_API_KEY</code>.
+        {/* Informative Note */}
+        <div className="bg-[#F8F8F6] border border-[#E5E5E2] rounded-lg p-3 mb-4 text-xs text-[#555555] space-y-1.5">
+          <p>
+            Your API key is sent only to your locally running backend server and kept in memory. You can also specify it in your local <code className="font-mono text-[#242424] bg-[#EBEBE8] px-1 py-0.5 rounded">.env</code> file as <code className="font-mono text-[#242424] bg-[#EBEBE8] px-1 py-0.5 rounded">TINYFISH_API_KEY</code>.
           </p>
           <a
             href="https://agent.tinyfish.ai/api-keys"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:underline pt-1"
+            className="text-[#237A57] hover:underline inline-flex items-center gap-1 font-medium"
           >
-            Get a TinyFish API Key <ExternalLink className="w-3 h-3" />
+            Get a key from TinyFish console <ExternalLink className="w-3 h-3" />
           </a>
         </div>
 
-        {/* Key Input Form */}
-        <form onSubmit={handleSave} className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSave} className="space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              API Key (e.g. sk-tinyfish-...)
+            <label className="block text-xs font-medium text-[#444444] mb-1">
+              API key
             </label>
             <input
               type="password"
-              placeholder={isConfigured ? "••••••••••••••••••••••••" : "Paste your TinyFish API Key here"}
+              placeholder={isConfigured ? "••••••••••••••••••••••••" : "sk-tinyfish-..."}
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-white border border-[#E5E5E2] rounded-lg px-3 py-2 text-sm font-mono text-[#242424] focus:outline-none focus:border-[#237A57] focus:ring-1 focus:ring-[#237A57] transition-colors"
             />
           </div>
 
           {status && (
-            <div className={`p-3 rounded-xl text-xs flex items-center gap-2 border ${
+            <div className={`p-2.5 rounded-lg text-xs flex items-center gap-2 border ${
               status.type === 'success'
-                ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                : 'bg-rose-950/40 border-rose-500/40 text-rose-300'
+                ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
+                : 'bg-[#FEF2F2] border-[#FECACA] text-[#991B1B]'
             }`}>
               {status.type === 'success' ? (
-                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle className="w-3.5 h-3.5 shrink-0 text-[#10B981]" />
               ) : (
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#EF4444]" />
               )}
               <span>{status.message}</span>
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-2">
+          <div className="flex items-center justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#555555] hover:text-[#242424] hover:bg-[#F4F4F2] transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !apiKey.trim()}
-              className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold text-xs transition-all shadow-md cursor-pointer"
+              className="px-4 py-1.5 rounded-lg bg-[#237A57] hover:bg-[#1c6347] disabled:bg-[#E5E5E2] disabled:text-[#777777] text-white font-medium text-xs transition-colors cursor-pointer"
             >
-              {loading ? 'Validating...' : 'Save & Activate'}
+              {loading ? 'Saving...' : 'Save key'}
             </button>
           </div>
         </form>

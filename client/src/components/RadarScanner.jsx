@@ -1,21 +1,11 @@
-import React, { useRef, useEffect } from 'react';
-import { 
-  Radar, 
-  Terminal, 
-  Globe, 
-  ExternalLink, 
-  CheckCircle2, 
-  Clock, 
-  ArrowRight,
-  ShieldAlert,
-  Play
-} from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { CheckCircle2, ChevronDown, ChevronUp, ExternalLink, Globe } from 'lucide-react';
 
-const STEPS = [
-  { step: 1, label: 'Endpoint 1: Discovery', desc: 'Querying TinyFish Search / Public Opportunity Index' },
-  { step: 2, label: 'Endpoint 2: Extraction', desc: 'Navigating to Official Program & Career Portals' },
-  { step: 3, label: 'Endpoint 3: Verification', desc: 'Verifying Deadlines, Application Links & Stipends' },
-  { step: 4, label: 'Step 4: Normalization', desc: 'Scoring Relevance, Deduplicating & Dashboard Assembly' }
+const STAGES = [
+  { step: 1, label: '1. Discovering opportunities', desc: 'Querying discovery sources matching criteria' },
+  { step: 2, label: '2. Reading official program details', desc: 'Extracting requirements, location, and compensation' },
+  { step: 3, label: '3. Checking application pages', desc: 'Verifying deadlines, links, and student eligibility' },
+  { step: 4, label: '4. Ranking results', desc: 'Evaluating relevance match and assembling dashboard' }
 ];
 
 export default function RadarScanner({ 
@@ -26,128 +16,102 @@ export default function RadarScanner({
   mode = 'live' 
 }) {
   const terminalEndRef = useRef(null);
+  const [isLogOpen, setIsLogOpen] = useState(true);
 
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activityLog]);
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 backdrop-blur-xl shadow-2xl space-y-6">
+    <div className="bg-white border border-[#E5E5E2] rounded-xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
       
-      {/* Top Banner: Status and Live Radar Animation */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-4 border-b border-slate-800">
-        
-        {/* Radar Graphic */}
-        <div className="flex items-center gap-5">
-          <div className="relative w-20 h-20 rounded-full border-2 border-emerald-500/40 bg-slate-950 flex items-center justify-center overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.2)]">
-            {/* Concentric rings */}
-            <div className="absolute inset-2 rounded-full border border-emerald-500/20" />
-            <div className="absolute inset-5 rounded-full border border-emerald-500/20" />
-            {/* Crosshairs */}
-            <div className="absolute w-full h-[1px] bg-emerald-500/20" />
-            <div className="absolute h-full w-[1px] bg-emerald-500/20" />
-            {/* Radar Sweep Needle */}
-            <div className="absolute inset-0 animate-radar-sweep origin-center">
-              <div className="w-1/2 h-1/2 bg-gradient-to-br from-emerald-400/40 to-transparent clip-path-polygon" />
-            </div>
-            {/* Blips */}
-            <div className="absolute top-4 right-5 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <div className="absolute bottom-5 left-6 w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-            <Radar className="w-6 h-6 text-emerald-400 relative z-10" />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                TinyFish Agent in Action
-              </h3>
-              <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${
-                mode === 'live' 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
-                  : 'bg-amber-500/10 text-amber-300 border border-amber-500/30'
-              }`}>
-                {mode === 'live' ? 'Live Cloud Browser' : 'Explicit Fallback Mode'}
-              </span>
-            </div>
-            <p className="text-xs text-slate-400 mt-1 max-w-md">
-              Executing autonomous browser operations across 3+ endpoints to uncover and verify live opportunities.
-            </p>
-          </div>
+      {/* Header: Title and Status */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#EBEBE8]">
+        <div className="flex items-center gap-2">
+          <h2 className="text-base font-semibold text-[#242424]">
+            Research activity
+          </h2>
+          <span className="text-xs text-[#777777]">
+            — Autonomous web agent in progress
+          </span>
         </div>
 
-        {/* Active Target Endpoint Display */}
-        {activeEndpoint && (
-          <div className="w-full md:w-auto bg-slate-950 border border-emerald-500/30 rounded-xl p-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-              <Globe className="w-4 h-4 animate-spin" style={{ animationDuration: '8s' }} />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono text-emerald-400 font-semibold tracking-wider block">
-                Active Browser Target
-              </span>
-              <span className="text-xs font-mono text-slate-200 truncate block max-w-xs md:max-w-sm">
-                {activeEndpoint}
-              </span>
-            </div>
-          </div>
-        )}
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-[#777777]">Mode:</span>
+          <span className={`px-2 py-0.5 rounded text-[11px] font-medium border ${
+            mode === 'live'
+              ? 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]'
+              : 'bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]'
+          }`}>
+            {mode === 'live' ? 'TinyFish Cloud Browser' : 'Verified Reference Mode'}
+          </span>
+        </div>
       </div>
 
-      {/* 4-Step Progress Stepper */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {STEPS.map((s) => {
+      {/* 4-Stage Timeline Stepper */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        {STAGES.map((s) => {
           const isDone = currentStep > s.step;
           const isCurrent = currentStep === s.step;
+
           return (
             <div
               key={s.step}
-              className={`p-3 rounded-xl border transition-all ${
+              className={`p-3 rounded-lg border text-xs transition-colors ${
                 isDone
-                  ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
+                  ? 'bg-[#F0F6F3] border-[#D1E5DC] text-[#242424]'
                   : isCurrent
-                  ? 'bg-slate-800/80 border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.15)] text-white'
-                  : 'bg-slate-950/60 border-slate-800 text-slate-500'
+                  ? 'bg-white border-[#237A57] ring-1 ring-[#237A57]/20 text-[#242424]'
+                  : 'bg-[#F8F8F6] border-[#E5E5E2] text-[#777777]'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider">
+                <span className={`font-medium ${isCurrent ? 'text-[#237A57]' : ''}`}>
                   {s.label}
                 </span>
                 {isDone ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#237A57]" />
                 ) : isCurrent ? (
-                  <div className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-3 h-3 border-2 border-[#237A57] border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <span className="text-xs font-mono text-slate-600">Step {s.step}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D5D5D0]" />
                 )}
               </div>
-              <p className="text-xs text-slate-400 line-clamp-1">{s.desc}</p>
+              <p className="text-[11px] text-[#777777] line-clamp-1">{s.desc}</p>
             </div>
           );
         })}
       </div>
 
-      {/* Live TinyFish Browser Stream (if STREAMING_URL provided by API) */}
+      {/* Active Endpoint Notice */}
+      {activeEndpoint && (
+        <div className="flex items-center gap-2 text-xs bg-[#F8F8F6] border border-[#E5E5E2] px-3 py-2 rounded-lg text-[#444444]">
+          <Globe className="w-3.5 h-3.5 text-[#237A57] shrink-0" />
+          <span className="font-medium shrink-0">Current target:</span>
+          <span className="font-mono text-[#242424] truncate flex-1" title={activeEndpoint}>
+            {activeEndpoint}
+          </span>
+        </div>
+      )}
+
+      {/* Live Browser Stream (if provided by TinyFish STREAMING_URL) */}
       {streamingUrl && (
-        <div className="bg-slate-950 border border-emerald-500/40 rounded-xl p-4 overflow-hidden">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold text-emerald-400 flex items-center gap-2">
-              <Play className="w-3.5 h-3.5" />
-              Live TinyFish Browser Stream
-            </span>
+        <div className="border border-[#E5E5E2] rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] border-b border-[#E5E5E2] text-xs">
+            <span className="font-medium text-[#444444]">Live browser session</span>
             <a
               href={streamingUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+              className="text-[#237A57] hover:underline flex items-center gap-1 text-[11px]"
             >
-              Open in window <ExternalLink className="w-3 h-3" />
+              Open in new tab <ExternalLink className="w-3 h-3" />
             </a>
           </div>
-          <div className="relative aspect-video w-full rounded-lg overflow-hidden border border-slate-800 bg-black">
+          <div className="relative aspect-video w-full bg-slate-900">
             <iframe
               src={streamingUrl}
-              title="TinyFish Browser Live Stream"
+              title="TinyFish Browser Session"
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin"
             />
@@ -155,38 +119,37 @@ export default function RadarScanner({
         </div>
       )}
 
-      {/* Live Agent Terminal Log */}
-      <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs">
-        <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-800/80">
-          <div className="flex items-center gap-2 text-slate-400">
-            <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-semibold text-slate-300">Live Agent Stream Activity</span>
-          </div>
-          <span className="text-[10px] text-slate-500">
-            {activityLog.length} events emitted
-          </span>
-        </div>
+      {/* Collapsible Activity Log Feed */}
+      <div className="border border-[#E5E5E2] rounded-lg overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setIsLogOpen(!isLogOpen)}
+          className="w-full px-3 py-2 bg-[#F8F8F6] border-b border-[#E5E5E2] flex items-center justify-between text-xs text-[#555555] font-medium cursor-pointer hover:bg-[#F2F2F0] transition-colors"
+        >
+          <span>Activity audit trail ({activityLog.length} events)</span>
+          {isLogOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
 
-        <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
-          {activityLog.length === 0 ? (
-            <div className="text-slate-600 italic py-2">
-              Agent initialized. Connecting to web workers...
-            </div>
-          ) : (
-            activityLog.map((log, idx) => (
-              <div key={idx} className="flex items-start gap-2 text-slate-300">
-                <span className="text-emerald-500 select-none">›</span>
-                <span className="text-slate-500 select-none text-[10px] pt-0.5 whitespace-nowrap">
-                  {new Date(log.timestamp || Date.now()).toLocaleTimeString()}
-                </span>
-                <span className={`flex-1 ${log.phase === 'NORMALIZATION' ? 'text-emerald-300 font-semibold' : ''}`}>
-                  {log.message || log.purpose || JSON.stringify(log)}
-                </span>
-              </div>
-            ))
-          )}
-          <div ref={terminalEndRef} />
-        </div>
+        {isLogOpen && (
+          <div className="p-3 bg-white font-mono text-[11px] max-h-40 overflow-y-auto space-y-1.5 leading-relaxed">
+            {activityLog.length === 0 ? (
+              <div className="text-[#999999] italic">Initializing agent session...</div>
+            ) : (
+              activityLog.map((log, idx) => (
+                <div key={idx} className="flex items-start gap-2 text-[#444444]">
+                  <span className="text-[#999999] select-none text-[10px] pt-0.5 whitespace-nowrap">
+                    {new Date(log.timestamp || Date.now()).toLocaleTimeString()}
+                  </span>
+                  <span className="text-[#777777] select-none">›</span>
+                  <span className="flex-1 break-words">
+                    {log.message || log.purpose || JSON.stringify(log)}
+                  </span>
+                </div>
+              ))
+            )}
+            <div ref={terminalEndRef} />
+          </div>
+        )}
       </div>
 
     </div>

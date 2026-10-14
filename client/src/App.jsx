@@ -7,19 +7,10 @@ import FilterToolbar from './components/FilterToolbar.jsx';
 import EmptyState from './components/EmptyState.jsx';
 import ErrorState from './components/ErrorState.jsx';
 import ApiKeyModal from './components/ApiKeyModal.jsx';
-import { 
-  Radar, 
-  Sparkles, 
-  ShieldCheck, 
-  Layers, 
-  ArrowRight,
-  Info,
-  CheckCircle2,
-  ExternalLink
-} from 'lucide-react';
+import { Info, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  // State
+  // Candidate Profile State
   const [profile, setProfile] = useState({
     opportunityType: 'Internship',
     skills: ['Python', 'Machine Learning', 'Data Structures'],
@@ -32,6 +23,7 @@ export default function App() {
     deadline: ''
   });
 
+  // App Execution State
   const [status, setStatus] = useState('idle'); // 'idle' | 'scanning' | 'complete' | 'error'
   const [errorMessage, setErrorMessage] = useState(null);
   const [opportunities, setOpportunities] = useState([]);
@@ -44,13 +36,13 @@ export default function App() {
   const [mode, setMode] = useState('fallback');
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
 
-  // Filters
+  // Filters & Sorting State
   const [typeFilter, setTypeFilter] = useState('All');
   const [remoteOnlyFilter, setRemoteOnlyFilter] = useState(false);
   const [verifiedOnlyFilter, setVerifiedOnlyFilter] = useState(false);
   const [sortBy, setSortBy] = useState('match_score');
 
-  // Check backend and TinyFish status on mount
+  // Verify backend and TinyFish status on mount
   useEffect(() => {
     fetch('/api/status')
       .then(res => res.json())
@@ -169,8 +161,20 @@ export default function App() {
     return match ? parseFloat(match[1]) : 0;
   }
 
+  // Real statistics derived from actual opportunity data
+  const stats = useMemo(() => {
+    const total = opportunities.length;
+    const verified = opportunities.filter(o => o.verification_status === 'Verified').length;
+    const remote = opportunities.filter(o => {
+      const loc = (o.location || '').toLowerCase();
+      return loc.includes('remote') || loc.includes('virtual') || loc.includes('anywhere');
+    }).length;
+    return { total, verified, remote };
+  }, [opportunities]);
+
   return (
-    <div className="min-h-screen bg-slate-950 bg-radar-grid text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#F8F8F6] text-[#242424] flex flex-col font-sans">
+      
       {/* Navigation Bar */}
       <Navbar
         mode={mode}
@@ -178,44 +182,30 @@ export default function App() {
         onOpenKeyModal={() => setIsKeyModalOpen(true)}
       />
 
-      {/* Explicit Fallback Mode Notice Banner */}
+      {/* Restrained Fallback Notice Banner */}
       {!isConfigured && (
-        <div className="bg-gradient-to-r from-amber-950/70 via-amber-900/40 to-amber-950/70 border-b border-amber-600/30 px-4 py-2.5">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-amber-200">
-            <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="bg-[#FFFBEB] border-b border-[#FDE68A] text-[#92400E] px-4 py-2 text-xs">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
               <span>
-                <strong>Explicit Fallback / Demo Mode:</strong> No <code className="bg-amber-950 px-1.5 py-0.5 rounded text-amber-300 font-mono">TINYFISH_API_KEY</code> detected. Simulating multi-endpoint pipeline with verified real-world opportunities.
+                <strong>Demo mode:</strong> Simulating browser research with reference student opportunities.
               </span>
             </div>
             <button
               onClick={() => setIsKeyModalOpen(true)}
-              className="text-xs font-semibold text-amber-300 hover:text-white underline underline-offset-2 shrink-0 cursor-pointer"
+              className="text-[#92400E] hover:text-[#78350F] underline font-medium cursor-pointer"
             >
-              Add API Key for Live Cloud Browser →
+              Configure API key for live browser →
             </button>
           </div>
         </div>
       )}
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+      {/* Main Content Container */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
         
-        {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>TinyFish × DTU Student Bounty Drop 001</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-            Autonomous Opportunity Radar
-          </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-            Personal AI Agent that searches the live web, navigates 3+ browser endpoints, verifies deadlines and compensation, and matches student opportunities to your exact preferences.
-          </p>
-        </div>
-
-        {/* Search & Configuration Form */}
+        {/* Search & Criteria Form */}
         <SearchForm
           profile={profile}
           setProfile={setProfile}
@@ -223,7 +213,7 @@ export default function App() {
           isLoading={status === 'scanning'}
         />
 
-        {/* Live Radar Scanner / Progress Section */}
+        {/* Live Research Activity Section */}
         {status === 'scanning' && (
           <RadarScanner
             currentStep={currentStep}
@@ -242,34 +232,34 @@ export default function App() {
           />
         )}
 
-        {/* Completed Results Dashboard */}
+        {/* Opportunities Results Dashboard */}
         {status === 'complete' && (
-          <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="space-y-4">
             
-            {/* Endpoints & Results Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 backdrop-blur-xl">
+            {/* Dashboard Header & Compact Summary */}
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-2 border-b border-[#E5E5E2]">
               <div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                  Verified Opportunities Dashboard
+                <h2 className="text-lg font-semibold text-[#242424]">
+                  Your opportunities
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Multi-step research completed across <strong>{visitedEndpoints.length} endpoints</strong>.
+                <p className="text-xs text-[#777777]">
+                  Evaluated and verified against your profile preferences.
                 </p>
               </div>
 
-              {/* Endpoints Visited Pills */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                {visitedEndpoints.map((ep, i) => (
-                  <span
-                    key={i}
-                    className="text-[11px] font-mono px-2 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 max-w-xs truncate"
-                    title={ep}
-                  >
-                    <span className="text-emerald-400 font-bold mr-1">EP{i+1}:</span>
-                    {ep}
-                  </span>
-                ))}
+              {/* Real Data Metrics */}
+              <div className="flex items-center gap-3 text-xs text-[#666666]">
+                <div>
+                  <span className="font-semibold text-[#242424]">{stats.total}</span> found
+                </div>
+                <span className="text-[#D5D5D0]">·</span>
+                <div>
+                  <span className="font-semibold text-[#065F46]">{stats.verified}</span> verified
+                </div>
+                <span className="text-[#D5D5D0]">·</span>
+                <div>
+                  <span className="font-semibold text-[#242424]">{stats.remote}</span> remote
+                </div>
               </div>
             </div>
 
@@ -286,7 +276,7 @@ export default function App() {
               totalResults={filteredOpportunities.length}
             />
 
-            {/* Cards Grid */}
+            {/* Opportunities List Grid */}
             {filteredOpportunities.length === 0 ? (
               <EmptyState
                 onReset={() => {
@@ -296,9 +286,25 @@ export default function App() {
                 }}
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredOpportunities.map((opp, idx) => (
                   <OpportunityCard key={idx} opportunity={opp} />
+                ))}
+              </div>
+            )}
+
+            {/* Endpoints Audit Trail */}
+            {visitedEndpoints.length > 0 && (
+              <div className="pt-2 flex flex-wrap items-center gap-2 text-[11px] text-[#777777]">
+                <span className="font-medium text-[#555555]">Endpoints checked ({visitedEndpoints.length}):</span>
+                {visitedEndpoints.map((ep, i) => (
+                  <span
+                    key={i}
+                    className="font-mono bg-white border border-[#E5E5E2] px-2 py-0.5 rounded text-[#555555] max-w-xs truncate"
+                    title={ep}
+                  >
+                    {ep}
+                  </span>
                 ))}
               </div>
             )}
@@ -309,10 +315,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Opportunity Radar — Powered by TinyFish Web Agent & Browser Automation</span>
-          <span>Targeting 200-Point Bounty Drop 001 Tier</span>
+      <footer className="border-t border-[#E5E5E2] bg-white py-4 text-xs text-[#777777]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span>Opportunity Radar — Autonomous Student Opportunity Research</span>
+          <span>Powered by TinyFish Web Agent & Browser Automation</span>
         </div>
       </footer>
 

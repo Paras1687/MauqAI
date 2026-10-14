@@ -1,22 +1,24 @@
 import React from 'react';
-import { AlertOctagon, RotateCcw } from 'lucide-react';
+import { AlertCircle, RotateCcw } from 'lucide-react';
 
 export default function ErrorState({ error, onRetry }) {
   return (
-    <div className="bg-rose-950/20 border border-rose-500/30 rounded-2xl p-10 text-center max-w-lg mx-auto backdrop-blur-xl">
-      <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400 mb-4">
-        <AlertOctagon className="w-8 h-8 text-rose-400" />
+    <div className="bg-white border border-[#FECACA] rounded-xl p-7 text-center max-w-md mx-auto shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+      <div className="w-10 h-10 rounded-lg bg-[#FEE2E2] flex items-center justify-center mx-auto text-[#DC2626] mb-3">
+        <AlertCircle className="w-5 h-5 text-[#DC2626]" />
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">Research Scan Failed</h3>
-      <p className="text-xs text-rose-300/80 mb-6 font-mono leading-relaxed bg-slate-950/80 p-3 rounded-xl border border-rose-900/50">
-        {error || 'An unexpected network error occurred while communicating with the browser worker.'}
+      <h3 className="text-base font-semibold text-[#242424] mb-1">
+        Research search failed
+      </h3>
+      <p className="text-xs text-[#666666] mb-4 font-mono leading-relaxed bg-[#F8F8F6] p-2.5 rounded border border-[#E5E5E2] break-words">
+        {error || 'An unexpected error occurred while communicating with the agent server.'}
       </p>
       <button
         onClick={onRetry}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-lg shadow-rose-900/40 cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#237A57] hover:bg-[#1c6347] text-white text-xs font-medium transition-colors cursor-pointer"
       >
-        <RotateCcw className="w-4 h-4" />
-        <span>Retry Scan</span>
+        <RotateCcw className="w-3.5 h-3.5" />
+        <span>Retry search</span>
       </button>
     </div>
   );
